@@ -1,0 +1,35 @@
+{
+    "name": "demoproject",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "playwright test",
+        "ui": "playwright test --project=ui && npm run allure:gen && npm run allure:open",
+        "api": "playwright test --project=api && npm run allure:gen && npm run allure:open",
+        "db": "playwright test --project=db && npm run allure:gen && npm run allure:open",
+        "ui:watch": "playwright test --project=ui --ui",
+        "trace": "playwright show-trace test-results/**/trace.zip",
+        "allure:gen": "allure generate --clean ./allure-results -o ./allure-report",
+        "allure:open": "allure open ./allure-report",
+        "db:up": "docker compose up -d",
+        "db:logs": "docker compose logs -f postgres",
+        "db:down": "docker compose down",
+        "db:reset": "docker compose down -v && docker compose up -d",
+        "db:shell": "docker exec -it demoproject-pg psql -U postgres -d demo -c \"\\dt\""
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "@playwright/test": "^1.54.2",
+        "@types/node": "^24.2.1",
+        "@types/pg": "^8.15.5",
+        "allure-commandline": "^2.34.1",
+        "allure-playwright": "^3.3.3",
+        "cross-env": "^7.0.3",
+        "dotenv": "^17.2.1",
+        "pg": "^8.16.3",
+        "typescript": "^5.9.2"
+    }
+}

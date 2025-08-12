@@ -1,0 +1,38 @@
+# Node
+node_modules/
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# TypeScript build
+dist/
+*.tsbuildinfo
+
+# Playwright outputs
+test-results/
+playwright-report/
+blob-report/
+
+# Allure reports
+allure-results/
+allure-report/
+
+# Env files (keep an example file committed)
+.env*
+!.env.example
+
+# Caches & temp
+.nyc_output/
+coverage/
+.cache/
+tmp/
+temp/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
