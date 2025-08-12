@@ -1,6 +1,6 @@
 # demoProject — Playwright + TypeScript (UI • API • DB)
 
-A lean, interview-ready SDET demo framework showing:
+A lean, code-challenge-ready SDET demo framework showing::
 - **UI tests** with Page Objects, stable locators, traces/videos on failure  
 - **API tests** with rich request/response logging + report attachments  
 - **DB tests** against Dockerized Postgres (or in-memory fallback), using safe transactions  
