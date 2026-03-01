@@ -1,34 +1,45 @@
 import { test, expect } from '@playwright/test';
 
-test('Navigate to the application and add new todo items', async ({ page }) => {
-  // Locators
-  const newTodoInput = page.locator('.new-todo');
-  const todoList = page.locator('.todo-list');
-  const todoItems = page.locator('.todo-list li');
-  const firstTodoToggle = page.locator('.todo-list li').first().locator('.toggle');
-  const completedFilter = page.locator('a[href="#/completed"]');
+test.describe('tests code challenge', () => {
+  test('first test challenge', async ({ page }) => {
+    // Declare locators at the same level (top of the test)
+    const newTodoInput = page.locator('.new-todo');
+    const todoList = page.locator('.todo-list');
+    const todoItems = page.locator('li[data-testid="todo-item"]');
+    const firstToggleButton = todoItems.first().locator('input[aria-label="Toggle Todo"]');
+    const completedFilter = page.locator('a[href="#/completed"]');
 
-  // Step 1: Navigate to the application
-  await page.goto('https://demo.playwright.dev/todomvc/');
+    await test.step('1. Go to the demo app url', async () => {
+      await page.goto('https://demo.playwright.dev/todomvc/');
+    });
 
-  // Step 2: Add new todo items
-  await newTodoInput.fill('Complete Playwright Challenge');
-  await newTodoInput.press('Enter');
+    await test.step('2. Add two new todo items', async () => {
+      await newTodoInput.fill('complete playwright challenge');
+      await newTodoInput.press('Enter');
 
-  await newTodoInput.fill('Submit the challenge');
-  await newTodoInput.press('Enter');
+      await newTodoInput.fill('submit the challenge');
+      await newTodoInput.press('Enter');
+    });
 
-  // Step 3: Verify todo list is visible and has 2 items
-  await expect(todoList).toBeVisible();
-  await expect(todoItems).toHaveCount(2);
+    await test.step('3. Assert todo list is present', async () => {
+      await expect(todoList).toBeVisible();
+    });
 
-  // Step 4: Mark first todo as completed
-  await firstTodoToggle.check();
-  await expect(firstTodoToggle).toBeChecked();
+    await test.step('4. Assert the list contains exactly 2 todo items', async () => {
+      await expect(todoItems).toHaveCount(2);
+    });
 
-  // Step 5: Filter by completed items
-  await completedFilter.click();
+    await test.step('5. Mark the first todo as completed (use the checkbox toggle)', async () => {
+      await firstToggleButton.check();
+      await expect(firstToggleButton).toBeChecked();
+    });
 
-  // Step 6: Verify only one completed item is shown
-  await expect(todoItems).toHaveCount(1);
+    await test.step('6. Click the Completed filter in the footer/navigation', async () => {
+      await completedFilter.click();
+    });
+
+    await test.step('7. Assert that after filtering, only 1 todo item is shown', async () => {
+      await expect(todoItems).toHaveCount(1);
+    });
+  });
 });

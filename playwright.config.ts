@@ -16,10 +16,13 @@ use: {
   video: 'retain-on-failure',
   screenshot: 'only-on-failure'
 },
+
+/// set diferents browser by project 
+
 projects: [
   { name: 'ui',  testMatch: 'src/tests/ui/**/*.spec.ts',  use: { ...devices['Desktop Chrome'] } },
-  { name: 'api', testMatch: 'src/tests/api/**/*.spec.ts' },
-  { name: 'db',  testMatch: 'src/tests/db/**/*.spec.ts' }
+  { name: 'api', testMatch: 'src/tests/api/**/*.spec.ts',  use: { browserName: 'firefox' }   },
+  { name: 'db',  testMatch: 'src/tests/db/**/*.spec.ts',  use: { browserName: 'webkit' }    },
 ],
 workers: 4,
 
