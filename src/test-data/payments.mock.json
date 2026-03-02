@@ -1,0 +1,33 @@
+[
+  {
+    "transactionId": "TXN-100001",
+    "policyNumber": "POL-2026-0001",
+    "amount": 1250.5,
+    "currency": "USD",
+    "status": "COMPLETED",
+    "createdAt": "2026-02-27T10:15:30Z",
+    "paymentMethod": { "type": "CREDIT_CARD", "last4": "4242" },
+    "insured": { "customerId": 987, "fullName": "Jeremy Giralt" }
+  },
+  {
+    "transactionId": "TXN-100002",
+    "policyNumber": "POL-2026-0002",
+    "amount": 89.99,
+    "currency": "AUD",
+    "status": "PENDING",
+    "createdAt": "2026-02-27T11:05:00Z",
+    "paymentMethod": { "type": "BANK_TRANSFER", "bankName": "Westpac" },
+    "insured": { "customerId": 654, "fullName": "Ana Lopez" }
+  },
+  {
+    "transactionId": "TXN-100003",
+    "policyNumber": "POL-2026-0003",
+    "amount": 300,
+    "currency": "CRC",
+    "status": "FAILED",
+    "createdAt": "2026-02-27T12:45:10Z",
+    "paymentMethod": { "type": "CREDIT_CARD", "last4": "1111" },
+    "insured": { "customerId": 321, "fullName": "Luis Mora" },
+    "failure": { "code": "INSUFFICIENT_FUNDS", "message": "Card declined" }
+  }
+]
