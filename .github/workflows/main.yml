@@ -114,25 +114,35 @@ jobs:
       - name: 3.Install dependencies
         run: npm ci
 
-      - name: 4.Start Dockerized DB
+      - name: 4.Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: 5.Start Dockerized DB
         run: npm run db:up
 
-      - name: 5.Wait for DB to be ready
-        run: sleep 10
-
-      - name: 6.Show DB logs
-        run: npm run db:logs 
-        continue-on-error: true
+      - name: 6.Wait for DB to be ready
+        run: |
+          for i in {1..30}; do
+            docker exec demoproject-pg pg_isready -U postgres -d demo && exit 0
+            echo "Waiting for database..."
+            sleep 2
+          done
+          echo "Database did not become ready in time"
+          exit 1
 
       - name: 7.Run DB tests
         run: npx playwright test --project=db
         continue-on-error: true
 
-      - name: 8.Stop Dockerized DB
+      - name: 8.Show DB logs on failure
+        if: failure()
+        run: docker compose logs postgres
+
+      - name: 9.Stop Dockerized DB
         if: always()
         run: npm run db:down
 
-      - name: 9.Upload DB Playwright report
+      - name: 10.Upload DB Playwright report
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -140,19 +150,22 @@ jobs:
           path: playwright-report/
           retention-days: 7
 
-      - name: 10.Install Allure CLI
+      - name: 11.Install Allure CLI
+        if: always()
         run: npm install -g allure-commandline --save-dev
 
-      - name: 11.Generate Allure report
+      - name: 12.Generate Allure report
+        if: always()
         run: allure generate allure-results --clean -o allure-report
 
-      - name: 12.Upload DB Allure results
+      - name: 13.Upload DB Allure results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: allure-results-db
           path: allure-results/
           retention-days: 7
+   
 
   allure-report:
     name: Generate Combined Allure Report
