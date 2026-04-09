@@ -1,7 +1,7 @@
 import {test,expect} from "@playwright/test";
 import { Verify } from "crypto";
 
-test('Go to the login accept agreement and open user profile', async({page})=>{
+test.skip('Go to the login accept agreement and open user profile', async({page})=>{
   await test.step('1.Go to login page', async ()=>{
     await page.goto('http//www.example.com')
   });

@@ -28,17 +28,19 @@ test('create a new post and verify response', async ({ request }) => {
 
 test('search  for product laptop and verify results', async ({ page }) => {  
   await page.goto('https://demo.nopcommerce.com/');
-  await page.fill('#email', 'testing@test.com');
-  await page.fill('#password', 'Testing@123');
-  await page.click('button[type="submit"]');
 
   //verify if the home page has been displayed after login
-  await expect(page).toHaveURL('https://demo.nopcommerce.com/Home');
-  await expect(page).toHaveTitle('nopCommerce demo store');
+  const homePageTitle = page.getByRole('link', { name: 'nopCommerce demo store' });
+  expect(homePageTitle).toBeVisible();
   
 
   // Locate the search box, enter 'laptop', and submit the search
   const searchBox = page.locator('input[id="small-searchterms"]');
-  await searchBox.fill('laptop');
+  await searchBox.fill('Asus');
   await searchBox.press('Enter');
+
+  // Verify that the search results page is displayed and contains results
+  await expect(page).toHaveURL('https://demo.nopcommerce.com/search?q=Asus');
+  const searchResults = page.locator('.product-item');
+  await expect(searchResults.first()).toContainText('Asus');
 });
