@@ -1,0 +1,223 @@
+name: Playwright Automation Test Framework  CI with Allure
+
+on:
+  push:
+    branches: ["develop", "main"]
+  pull_request:
+    branches: ["develop", "main"]
+  workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  ui-tests:
+    name: Run UI Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 1.Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 2.Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: 3.Install dependencies
+        run: npm ci
+
+      - name: 4.Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: 5.Run UI tests
+        run: npx playwright test --project=ui
+        continue-on-error: true
+
+      - name: 6.Upload UI Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-ui
+          path: playwright-report/
+          retention-days: 7
+
+      - name: 7.Install Allure CLI
+        run: npm install -g allure-commandline --save-dev
+
+      - name: 8.Generate Allure report
+        run: allure generate allure-results --clean -o allure-report
+
+      - name: 9.Upload UI Allure results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-ui
+          path: allure-results/
+          retention-days: 7
+
+  api-tests:
+    name: Run API Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 1.Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 2.Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: 3.Install dependencies
+        run: npm ci
+
+      - name: 4.Run API tests
+        run: npx playwright test --project=api
+        continue-on-error: true
+
+      - name: 5.Upload API Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-api
+          path: playwright-report/
+          retention-days: 7
+
+      - name: 7.Install Allure CLI
+        run: npm install -g allure-commandline --save-dev
+
+      - name: 8.Generate Allure report
+        run: allure generate allure-results --clean -o allure-report
+
+      - name: 9.Upload API Allure results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-api
+          path: allure-results/
+          retention-days: 7
+
+  db-tests:
+    name: Run DB Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 1.Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 2.Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: 3.Install dependencies
+        run: npm ci
+
+      - name: 4.Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: 5.Start Dockerized DB
+        run: npm run db:up
+
+      - name: 6.Wait for DB to be ready
+        run: |
+          for i in {1..30}; do
+            docker exec demoproject-pg pg_isready -U postgres -d demo && exit 0
+            echo "Waiting for database..."
+            sleep 2
+          done
+          echo "Database did not become ready in time"
+          exit 1
+
+      - name: 7.Run DB tests
+        run: npx playwright test --project=db
+        continue-on-error: true
+
+      - name: 8.Show DB logs on failure
+        if: failure()
+        run: docker compose logs postgres
+
+      - name: 9.Stop Dockerized DB
+        if: always()
+        run: npm run db:down
+
+      - name: 10.Upload DB Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-db
+          path: playwright-report/
+          retention-days: 7
+
+      - name: 11.Install Allure CLI
+        if: always()
+        run: npm install -g allure-commandline --save-dev
+
+      - name: 12.Generate Allure report
+        if: always()
+        run: allure generate allure-results --clean -o allure-report
+
+      - name: 13.Upload DB Allure results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-db
+          path: allure-results/
+          retention-days: 7
+   
+
+  allure-report:
+    name: Generate Combined Allure Report
+    runs-on: ubuntu-latest
+    needs: [ui-tests, api-tests, db-tests]
+    if: always()
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install Allure CLI
+        run: npm install -g allure-commandline --save-dev
+
+      - name: Download UI Allure results
+        uses: actions/download-artifact@v4
+        with:
+          name: allure-results-ui
+          path: merged-allure-results/ui
+
+      - name: Download API Allure results
+        uses: actions/download-artifact@v4
+        with:
+          name: allure-results-api
+          path: merged-allure-results/api
+
+      - name: Download DB Allure results
+        uses: actions/download-artifact@v4
+        with:
+          name: allure-results-db
+          path: merged-allure-results/db
+
+      - name: Merge Allure results
+        run: |
+          mkdir -p allure-results
+          find merged-allure-results -type f -exec cp {} allure-results/ \;
+
+      - name: Generate Allure HTML report
+        run: allure generate allure-results --clean -o allure-report
+
+      - name: Upload Allure HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: allure-report/
+          retention-days: 7
