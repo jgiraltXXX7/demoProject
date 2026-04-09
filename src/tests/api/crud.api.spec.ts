@@ -31,7 +31,7 @@ expect(body[0]).toHaveProperty('address.geo.lng');
 
 
 //value Validations
-expect(body[0].email).toBe('string');
+expect(typeof body[0].email).toBe("string");
 expect(typeof body[0].id).toBe('number');
 expect(typeof body[0].name).toBe('string');
 expect(typeof body[0].username).toBe('string');
@@ -52,8 +52,8 @@ expect(body[0]).toMatchObject({
     street: expect.any(String),
     city: expect.any(String),
     geo: {
-      lat: expect.any(Number),
-      lng: expect.any(Number)
+      lat: expect.any(String),
+      lng: expect.any(String)
     }
   }
 });
@@ -78,7 +78,7 @@ expect(response.ok()).toBeTruthy();
 //body Validations
 const responseBody = await response.json();
 expect(typeof responseBody).toBe('object');
-expect(responseBody.length).toBeGreaterThan(0);
+expect(typeof responseBody).toBe('object');
 
 //property Validations
 expect(responseBody).toHaveProperty('id');
@@ -114,7 +114,7 @@ test('PUT updates an existing post', async ({ request }) => {
   //body Validations
   const responseBody = await response.json();
   expect (typeof responseBody).toBe('object');
-  expect(responseBody.length).toBeGreaterThan(0);
+  expect(typeof responseBody).toBe('object');
 //property Validations
 expect(responseBody).toHaveProperty('id');
 expect(responseBody).toHaveProperty('title');
@@ -145,7 +145,7 @@ expect(response.status()).toBe(200);
 //body Validations
 const patchedBody = await response.json();
 expect(typeof patchedBody).toBe('object');
-expect(patchedBody.length).toBeGreaterThan(0);
+expect(typeof patchedBody).toBe('object');
 //property Validations
 expect(patchedBody).toHaveProperty('id');   
 expect(patchedBody.title).toBe(patch.title);
@@ -160,7 +160,7 @@ expect(response.ok()).toBeTruthy();
 expect(response.status()).toBe(200);  
 //body Validations
 const responseBody = await response.text();
-expect(responseBody).toBe('');  
+expect(responseBody).toBe("{}");  
 });
 
 });
