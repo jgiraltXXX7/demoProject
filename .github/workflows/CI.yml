@@ -1,10 +1,10 @@
-name: Playwright CI with Allure
+name: Playwright Automation Test Framework  CI with Allure
 
 on:
   push:
-    branches: ["develop"]
+    branches: ["develop", "main"]
   pull_request:
-    branches: ["develop"]
+    branches: ["develop", "main"]
   workflow_dispatch:
 
 jobs:
