@@ -29,7 +29,9 @@ workers: 4,
 reporter: [
   ['list'],
   ['html', { open: 'on-failure' }], // auto-open if something fails
-  ['allure-playwright']             // keeps Allure results too
+  ['allure-playwright', {
+      detail: true,
+      outputFolder: 'allure-results'}]             // keeps Allure results too
 ],
 
 });
