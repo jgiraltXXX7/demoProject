@@ -5,6 +5,7 @@
     "main": "index.js",
 "scripts": {
   "test": "playwright test",
+  "test:allure": "playwright test && allure generate ./allure-results --clean -o ./allure-report",
   "ui": "playwright test --project=ui",
   "api": "playwright test --project=api",
   "db": "playwright test --project=db",
