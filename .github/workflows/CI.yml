@@ -43,7 +43,7 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Run UI tests
-        run: npx playwright test --project=ui
+        run: npm run ui:report
         continue-on-error: true
 
       - name: Upload Playwright report
@@ -92,7 +92,7 @@ jobs:
         run: npm ci
 
       - name: 4.Run API tests
-        run: npx playwright test --project=api
+        run: npm run api:report
         continue-on-error: true
 
       - name: 5.Upload API Playwright report
