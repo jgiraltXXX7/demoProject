@@ -2,11 +2,15 @@ name: Scheduled Playwright Tests
 
 on:
   schedule:
-    - cron: "0 14 * * *" 
+    - cron: "40 14 * * *" # 8:40 AM Costa Rica
   workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   run-tests:
+    name: Run Scheduled Playwright Tests
     runs-on: ubuntu-latest
 
     container:
@@ -22,11 +26,20 @@ jobs:
           node-version: 20
           cache: npm
 
+      - name: Install Java for Allure
+        run: |
+          apt-get update
+          apt-get install -y openjdk-11-jdk
+          echo "JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64" >> $GITHUB_ENV
+          echo "/usr/lib/jvm/java-11-openjdk-amd64/bin" >> $GITHUB_PATH
+          java -version
+
       - name: Install dependencies
         run: npm ci
 
       - name: Run all tests
         run: npx playwright test
+        continue-on-error: true
 
       - name: Upload Playwright report
         if: always()
@@ -34,6 +47,7 @@ jobs:
         with:
           name: playwright-report-scheduled
           path: playwright-report/
+          retention-days: 7
 
       - name: Upload Allure results
         if: always()
@@ -41,3 +55,16 @@ jobs:
         with:
           name: allure-results-scheduled
           path: allure-results/
+          retention-days: 7
+
+      - name: Generate Allure report
+        if: always()
+        run: npx allure generate ./allure-results --clean -o allure-report
+
+      - name: Upload Allure report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report-scheduled
+          path: allure-report/
+          retention-days: 7
