@@ -47,7 +47,7 @@ jobs:
           rm -rf allure-results allure-report playwright-report test-results
 
       - name: Run UI tests
-        run: npx playwright test tests/ui
+        run: npm run ui
         continue-on-error: true
 
       - name: Debug generated folders
