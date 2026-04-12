@@ -28,10 +28,10 @@ workers: 4,
 
 reporter: [
   ['list'],
-  ['html', { open: 'on-failure' }], // auto-open if something fails
+  ['html', { open: 'on-failure' }],
   ['allure-playwright', {
-      detail: true,
-      outputFolder: 'allure-results'}]             // keeps Allure results too
+    resultsDir: 'allure-results'
+  }]
 ],
 
 });
