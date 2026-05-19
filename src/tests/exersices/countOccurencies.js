@@ -1,6 +1,6 @@
 //count ocurrencies
 function countOccurencies(arr) {
-    let count = {};   
+    let count = [];   
     for (let i = 0; i < arr.length; i++) {
       let element = arr[i];
       if (count[element]) {
